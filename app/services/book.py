@@ -13,9 +13,3 @@ class BookService:
         Books[book_id]["is_available"] = False
 
         return Books[book_id]
-
-        # return {
-        #     "title": Books[book_id].get("title"),
-        #     "author": Books[book_id].get("author"),
-        #     "is_available": Books[book_id]["is_available"],
-        # } 

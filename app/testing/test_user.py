@@ -10,10 +10,10 @@ from uuid import uuid4
 client = TestClient(app)
 
 Mock_Users = {
-    "60dfd9fb-4d9b-458d-8627-f41eb747e04c": {
+    "ed24b9ef-239d-4d7d-894d-cd6fe892227f": {
         "name": "first name",
         "email": "first email",
-        "user_id": "60dfd9fb-4d9b-458d-8627-f41eb747e04c",
+        "user_id": "ed24b9ef-239d-4d7d-894d-cd6fe892227f",
         "is_active": True
     }
 }
@@ -27,7 +27,7 @@ def test_get_all_users():
 
 
 @patch("crud.user", Mock_Users)
-@patch("crud.user.uuid4", return_value="982e7a40-0d99-408a-abd0-4095f070c22e")
+@patch("crud.user.uuid4", return_value="5b49e896-d9ab-45da-b9b8-4d6f709bd6b5")
 def test_create_user(mock_uuid):
     create_user = {
         "name": "Opeyemi",
@@ -36,7 +36,7 @@ def test_create_user(mock_uuid):
     }
     expected_create_user = {
         "detail": {
-        "user_id": "982e7a40-0d99-408a-abd0-4095f070c22e",
+        "user_id": "5b49e896-d9ab-45da-b9b8-4d6f709bd6b5",
         "name": "Opeyemi",
         "email": "email1@gmail.com",
         "is_active": True
@@ -52,13 +52,13 @@ def test_create_user(mock_uuid):
 def test_get_user_by_id():
 
     expected_user = {
-        "user_id": "60dfd9fb-4d9b-458d-8627-f41eb747e04c",
+        "user_id": "ed24b9ef-239d-4d7d-894d-cd6fe892227f",
         "name": "first name",
         "email": "first email",
         "is_active": True
     }
 
-    response = client.get("/v1/users/60dfd9fb-4d9b-458d-8627-f41eb747e04c")
+    response = client.get("/v1/users/ed24b9ef-239d-4d7d-894d-cd6fe892227f")
     print(Mock_Users)
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["detail"] == expected_user
@@ -80,7 +80,7 @@ def test_updated_user():
         }, "message": "User updated successfully"
     }
 
-    response = client.put("/v1/users/60dfd9fb-4d9b-458d-8627-f41eb747e04c", json = new_data)
+    response = client.put("/v1/users/ed24b9ef-239d-4d7d-894d-cd6fe892227f", json = new_data)
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == updated_user
 
@@ -100,26 +100,27 @@ def test_patch_user():
         }, "message": "Name updated successfully"
     }
 
-    response = client.patch("/v1/users/60dfd9fb-4d9b-458d-8627-f41eb747e04c", json = new_data)
+    response = client.patch("/v1/users/ed24b9ef-239d-4d7d-894d-cd6fe892227f", json = new_data)
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == patched_user
 
 
 @patch("crud.user.Users", Mock_Users)
 def test_delete_user():
-    response = client.delete("/v1/users/60dfd9fb-4d9b-458d-8627-f41eb747e04c")
+    response = client.delete("/v1/users/ed24b9ef-239d-4d7d-894d-cd6fe892227f")
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["message"] == "User deleted successfully"
 
 
-# @patch("services.user.Users", Mock_Users)
+# @patch("crud.user.Users", Mock_Users)
 # def test_deactivate_user():
 #     expected_user = {
+#         "user_id": "ed24b9ef-239d-4d7d-894d-cd6fe892227f",
 #         "name": "first name",
 #         "email": "first email",
 #         "is_active": True
 #     }
-#     response = client.put("/v1/users/60dfd9fb-4d9b-458d-8627-f41eb747e04c/deactivate")
+#     response = client.put("/v1/users/ed24b9ef-239d-4d7d-894d-cd6fe892227f/deactivate")
 #     print(response.json())
 #     print(Mock_Users)
 #     assert response.status_code == status.HTTP_200_OK
