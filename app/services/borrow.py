@@ -86,5 +86,5 @@ class BorrowService:
 
         Books[book_id]["is_available"] = True
 
-        return {"message": "Borrowed book returned successfully", "data": Borrow_Records[record_id] }
+        return Borrow_Records[record_id] 
     

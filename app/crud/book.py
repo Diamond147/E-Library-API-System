@@ -20,7 +20,7 @@ class BookCrud:
             
         id = str(uuid4())
         new_book = Book(book_id = id, **data.model_dump())
-        Books[id] = new_book
+        Books[id] = new_book.model_dump()
 
         return new_book
     

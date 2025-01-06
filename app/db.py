@@ -10,4 +10,4 @@ Books: Dict[str, Dict[str, any]] = {}
 
 Borrow_Records: Dict[str, Dict[str, any]] = {}
 
-print(uuid4())
+# print(uuid4())
