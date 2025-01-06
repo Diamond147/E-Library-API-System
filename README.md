@@ -1,5 +1,3 @@
-# E-Library-API-System
-
 E-Library API System
 
 
@@ -8,6 +6,7 @@ Description:
 The goal of this project is to create a simple API for managing an online library system. This system allows users to borrow and return books, manage user information, and track the availability of books. 
 
 This project uses in-memory data structures for storage and it is built with FastAPI.
+
 ## Features
 
 User Management:
@@ -49,6 +48,7 @@ Borrow Record Management:
 2. Language: Python
 
 3. Data Storage: In-memory structures (dictionaries)
+
 ## Installation
 
 1. Python 3.9 or higher
@@ -59,33 +59,34 @@ Borrow Record Management:
 
 1. Clone the repository:
 
-git clone https://github.com/taofeekadisa/e-library-api-system.git
+```git clone https://github.com/Diamond147/E-Library-API-System.git```
 
 2. Create a virtual environment:
 
-\\\python -m venv venv\\\\
+```python -m venv venv```
 
-\\\source venv/bin/activate\\\
+```source venv/bin/activate```
 
 On windows
 
-\\\python -m venv venv\\\
+```python -m venv venv```
 
-\\\source venv/Scripts/activate\\\
+```source venv/Scripts/activate```
 
 3. Install dependencies:
 
-\\\pip install -r requirements.txt\\\ 
+```pip install -r requirements.txt```
 
 4. Run the FastAPI server:
 
-\\\uvicorn main:app --reload\\\
+```uvicorn main:app --reload```
 
 5. Open the API documentation in your browser:
 
 Swagger UI : http://127.0.0.1:8000/docs
 
 Redoc: http://127.0.0.1:8000/redoc
+
 ## API Endpoints
 
 User Endpoints
@@ -137,12 +138,12 @@ BorrowRecord Endpoints
 GET /v1/borrowrecord/{user_id} - View specific book record.
 
 GET /v1/borrowrecord/- View all borroe records.
+
 ## Running Tests
 
 To run the tests, execute the following command:
 
-\\\pytest\\\
-
+```pytest```
 
 ## Contributing
 
