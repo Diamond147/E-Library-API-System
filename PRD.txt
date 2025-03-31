@@ -1,0 +1,92 @@
+2ND SEMESTER E-LIBRARY API SYSTEM
+
+CONSTRAINTS:
+1. Users must be active to perform any operations.
+2. Books must be available to be borrowed.
+3. Each borrowing operation should have a unique BorrowRecord.
+4. Add a README.md file with instructions on how to run the application.
+5. Include test cases to validate your API endpoints (optional for extra credit).
+
+####################################################
+
+**USER ENDPOINTS**
+
+1. Read User - GET
+*No request body needed.
+
+2. Create User - POST
+*Unique ID (Internal)
+*Name
+*Email
+*is_active(True)
+
+3. Get User by ID - GET
+* Unique ID
+
+4. Update User - PUT
+*Name
+*Email
+
+5. Partially Update User - PATCH
+*Name
+
+6. Delete User - DELETE
+* Unique ID
+
+7. Endpoint to deactivate a user, setting is_active to False - PUT
+* Unique ID
+
+####################################################
+
+**BOOK ENDPOINTS**
+
+1.. Read User - GET
+*No request body needed
+
+2. Create Book - POST
+*Unique ID (Internal)
+*Title
+*Author
+*is_available(True)
+
+3. Get User by ID - GET
+* Unique ID
+
+4. Update User - PUT
+*Title
+*Author
+
+5. Update User - PATCH
+*Author
+
+6. Delete User - DELETE
+* Unique ID
+
+7. Endpoint to mark a book as unavailable (e.g., if it’s lost or under maintenance) - PUT
+* Unique ID
+
+####################################################
+
+**BORROW OPERATIONS**:
+
+Borrow a book - Allows an active user to borrow an available book.
+
+A user cannot borrow a book if it’s unavailable or if they have already borrowed the same book.
+
+If the book is successfully borrowed, update its is_available status to False.
+
+If the book cannot be borrowed, return an appropriate response and status code.
+
+Return a book - Marks a borrowed book as returned by updating the return_date in the BorrowRecord and setting the book’s is_available status to True.
+
+####################################################
+
+**BorrowRecord Endpoints**
+Each borrowing operation should have a unique BorrowRecord.
+
+1. View Specific Borrow Record - GET
+*User_id
+
+2. View all Borrow Record - GET
+
+
