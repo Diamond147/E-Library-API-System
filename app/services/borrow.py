@@ -37,41 +37,57 @@ class BorrowService:
         return Borrow_Records
     
 
-    @staticmethod
-    def book_not_available(user_id:str, book_id:str):
+# #from sqlalchemy.orm import Session
+# from fastapi import Depends, HTTPException, status
+# from database import SessionLocal
+# from models import User, Book, BorrowRecord
+# import uuid
+# from datetime import datetime
 
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        
-        if book_id not in Books:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
-        
-        for record_id, record_data in Borrow_Records.items():
-            if Borrow_Records[record_id]["user_id"] == user_id and Borrow_Records[record_id]["book_id"] == book_id:
-                raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User has already borrowed this book")
-        
-        if not Books[book_id]["is_available"]:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not available")
-        
-        return {"message": "Book is available"}
+# # Dependency to get the database session
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
+
+# def borrow_book(user_id: str, book_id: str, db: Session = Depends(get_db)):
+#     # Check if user exists
+#     user = db.query(User).filter(User.id == user_id).first()
+#     if not user:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
+#     if not user.is_active:
+#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not active")
 
-    @staticmethod
-    def borrowed_book_status(book_id:str):
-
-        if Books[book_id]["is_available"] is True:
-            Books[book_id]["is_available"] = False 
-
-        return Books[book_id]
+#     # Check if book exists
+#     book = db.query(Book).filter(Book.id == book_id).first()
+#     if not book:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
     
+#     if not book.is_available:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Book is not available")
 
-    @staticmethod
-    def book_cannot_be_borrowed(book_id:str):
+#     # Create a borrow record
+#     record = BorrowRecord(
+#         id=str(uuid.uuid4()),
+#         user_id=user_id,
+#         book_id=book_id,
+#         borrow_date=datetime.utcnow(),
+#         return_date=None
+#     )
 
-        if Books[book_id]["is_available"] is False:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book cannot be borrowed")
-        
-        return Books[book_id]
+#     # Update book availability
+#     book.is_available = False
+
+#     # Save changes to the database
+#     db.add(record)
+#     db.commit()
+#     db.refresh(record)
+
+#     return record
+
     
 
     @staticmethod

@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from db import Users, Books, Borrow_Records
+from db import Users, Borrow_Records
 
 class BorrowRecordCrud:
 
@@ -24,4 +24,4 @@ class BorrowRecordCrud:
     def view_all_borrow_record():
         return Borrow_Records
 
-Borrow_Record_Crud = BorrowRecordCrud
+BorrowCrud = BorrowRecordCrud

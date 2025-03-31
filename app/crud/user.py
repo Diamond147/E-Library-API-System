@@ -1,69 +1,116 @@
-from uuid import uuid4
-from fastapi import HTTPException, status
-from schemas.user import User, UserCreate, UserPatch, UserUpdate
-from db import Users
+from uuid import UUID, uuid4
+from schemas.user import UserCreate, UserPatch, UserUpdate
+from model import User
+from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 
 
 class UserCrud:
 
-    @staticmethod
-    def get_users(): 
-        return Users
+    @staticmethod    # you don't make use of self while using staticmethod
+    def get_all_users(db:Session): 
+        return db.query(User).all()
     
 
     @staticmethod
-    def create_user(data:UserCreate):
+    def create_user(db:Session, data:UserCreate): 
 
-        for id, var in Users.items():
-            if var["name"] == data.name and var["email"] == data.email:
-                raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exist")
-            
-        id = str(uuid4())
-        new_user = User(user_id = id, **data.model_dump())
-        Users[id] = new_user.model_dump()
+        new_user = User(id=str(uuid4()), **data.model_dump())
+        # new_user = User(**data.model_dump())
+
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
         return new_user
     
-
+    
     @staticmethod
-    def get_user_by_id(user_id:str):
-
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        
-        return Users[user_id]
+    def get_user_by_id(db:Session, user_id:str):
+        user = db.query(User).filter(User.id == user_id).first()
+        return user
     
 
     @staticmethod
-    def update_user(user_id: str, data: UserUpdate):
+    def update_user(db: Session, user_id: str, data: UserUpdate):
 
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        # Get the book by id
+        user = User_Crud.get_user_by_id(db, user_id)
+
+        if not user:
+            return None
         
-        Users[user_id] = data.model_dump()
+        # Convert to dict
+        updated_user_dict = data.model_dump(exclude_unset=True)
 
-        return Users[user_id]
+        # Update the book in the database
+        for key, value in updated_user_dict.items():
+            setattr(user, key, value)
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        return user
+    
+
+    # @staticmethod
+    # def update_user(db:Session, user_id: str, data:UserUpdate):
+    #     # Get the user by id
+    #     user = User_Crud.get_user_by_id(db, user_id)
+
+    #     if not user:
+    #         return None
+        
+    #     # Convert to dict
+    #     updated_user_dict = data.model_dump(exclude_unset=True)
+    #     existing_user = jsonable_encoder(user)
+
+    #     # Update the user in the database
+    #     for key in existing_user:
+    #         if key in updated_user_dict:
+    #             setattr(user, key, updated_user_dict[key])
+
+    #     db.add(user)
+    #     db.commit()
+    #     db.refresh(user)
+
+    #     return user
+    
+    @staticmethod
+    def partially_update_user(db: Session, user_id: str, data: UserPatch):
+
+        # Get the book by id
+        user = User_Crud.get_user_by_id(db, user_id)
+        # user = db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            return None
+        
+        # Convert to dict
+        new_user_dict = data.model_dump(exclude_unset=True)
+
+        # Update the user in the database
+        for key, value in new_user_dict.items():
+            setattr(user, key, value)
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        return user
     
 
     @staticmethod
-    def partially_update_user(user_id: str, data:UserPatch):
+    def delete_user(db:Session, user_id: str):
+        user = User_Crud.get_user_by_id(db, user_id)
 
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        if not user:
+            return None
         
-        Users[user_id] = data.model_dump(exclude_unset=True)
-
-        return Users[user_id]
-    
-
-    @staticmethod
-    def delete_user(user_id: str):
-
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        db.delete(user)
+        db.commit()
         
-        del Users[user_id]
-
         return {"message": "User deleted successfully"}
        
     
