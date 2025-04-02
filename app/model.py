@@ -1,9 +1,10 @@
-from sqlalchemy import String, Boolean
+from sqlalchemy import String, Boolean, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 from sqlalchemy.dialects.postgresql import UUID
-from database import Base
+from sqlalchemy.orm import declarative_base
 
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
@@ -11,11 +12,13 @@ class User(Base):
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    age: Mapped[int] = mapped_column(Integer, nullable=False, server_default="Unknown")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, name={self.name!r}, email={self.email!r}, is_active={self.is_active!r})"
-
+        return f"User(id={self.id!r}, name={self.name!r}, email={self.email!r}, age={self.age!r}, is_active={self.is_active!r})"
+    
+# server_default ensures a default value is set at the database level, even for existing rows. This is for Alembic migrations.
 
 class Book(Base):
     __tablename__ = "books"

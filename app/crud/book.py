@@ -30,37 +30,55 @@ class BookCrud:
         return db.query(Book).filter(Book.id == book_id).first()
     
 
-    # @staticmethod
-    # def update_book(book_id: str, data: BookUpdate):
+    @staticmethod
+    def update_book(db:Session, book_id: str, data: BookUpdate):
+        book = BookCrud.get_book_by_id(db, book_id)
 
-    #     if book_id not in Books:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+        if not book:
+            return None
         
-    #     Books[book_id] = data.model_dump()
+        Updated_book_dict = data.model_dump(exclude_unset=True)
 
-    #     return Books[book_id]
+        for key, value in Updated_book_dict.items():
+            setattr(book, key, value)
+
+        db.add(book)
+        db.commit()
+        db.refresh(book)
+
+        return book
     
 
-    # @staticmethod
-    # def partially_update_book(book_id: str, data: BookPatch):
+    @staticmethod
+    def partially_update_book(db:Session, book_id: str, data: BookPatch):
+        book = BookCrud.get_book_by_id(db, book_id)
 
-    #     if book_id not in Books:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+        if not book:
+            return None
         
-    #     Books[book_id] = data.model_dump(exclude_unset=True)
+        partially_updated_book_dict = data.model_dump(exclude_unset=True)
 
-    #     return Books[book_id]
+        for key, value in partially_updated_book_dict.items():
+            setattr(book, key, value)
+
+        db.add(book)
+        db.commit()
+        db.refresh(book)
+        
+        return book
     
 
-    # @staticmethod
-    # def delete_book(book_id: str):
+    @staticmethod
+    def delete_book(db:Session, book_id: str):
+        book = BookCrud.get_book_by_id(db, book_id)
 
-    #     if book_id not in Books:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+        if not book:
+            return None
         
-    #     del Books[book_id]
+        db.delete(book)
+        db.commit()
 
-    #     return {"message": "Book deleted successfully"}
+        return {"message": "Book deleted successfully"}
     
 
 

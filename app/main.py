@@ -3,12 +3,12 @@ from routers.user import user_router
 from routers.book import book_router
 from routers.borrow import borrow_router
 from routers.borrow_record import borrow_record_router
-from database import engine, Base
-
-
-app = FastAPI()
+from database import engine
+from model import Base
 
 # Base.metadata.create_all(bind=engine)
+
+app = FastAPI()
 
 
 app.include_router(user_router, prefix="/v1/users", tags=["Users"])

@@ -17,7 +17,12 @@ class BookUpdate(BaseModel):
 
 class BookPatch(BaseModel):
     title: Optional[str] = "Updated first title"
-    author: Optional[str] = "Corrected first author"
+    author: Optional[str] = "Partially Corrected first author"
     is_available: bool = True
+
+class BookUnavailable(BaseModel):
+    title: Optional[str] = "first title"
+    author: Optional[str] = "first author"
+    is_available: bool = False
 
 # print(uuid4())

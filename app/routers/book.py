@@ -1,13 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas.book import BookCreate,BookPatch,BookUpdate
+from schemas.book import BookCreate,BookPatch,BookUpdate, BookUnavailable
 from crud.book import Book_crud
-from model import Book
 from services.book import BookService
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine, Base
-
-
-Base.metadata.create_all(bind=engine)
+from database import SessionLocal
 
 
 book_router = APIRouter()
@@ -45,26 +41,45 @@ async def get_book_by_id(book_id:str, db:Session = Depends(get_db)):
     
     return {"detail": book, "message": "successfully"}
 
-# #update book
-# @book_router.put("/{book_id}", status_code=status.HTTP_200_OK)
-# async def update_book(book_id: str, data: BookUpdate):
-#     book = Book_crud.update_book(book_id, data)
-#     return {"detail": book, "message": "Book updated successfully"}
+#update book
+@book_router.put("/{book_id}", status_code=status.HTTP_200_OK)
+async def update_book(book_id: str, data: BookUpdate, db:Session = Depends(get_db)):
+    book = Book_crud.update_book(db, book_id, data)
 
-# # partially update book
-# @book_router.patch("/{book_id}", status_code=status.HTTP_200_OK)
-# async def partially_update_book(book_id: str, data: BookPatch):
-#     book = Book_crud.partially_update_book(book_id, data)
-#     return {"detail": book, "message": "Author updated successfully"}
+    if book is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    
+    return {"detail": book, "message": "Book updated successfully"}
 
-# #delete book
-# @book_router.delete("/{book_id}", status_code = status.HTTP_200_OK)
-# async def delete_book(book_id: str):
-#     Book_crud.delete_book(book_id)
-#     return {"message": "Book deleted successfully"}
 
-# #unavailable book
-# @book_router.put("/{book_id}/unavailable", status_code=status.HTTP_200_OK)
-# async def mark_book_unavailable(book_id: str):
-#     book = BookService.mark_book_unavailable(book_id)
-#     return {"detail": book, "message": "Book successfully marked as unavailable"}
+# partially update book
+@book_router.patch("/{book_id}", status_code=status.HTTP_200_OK)
+async def partially_update_book(book_id: str, data: BookPatch, db:Session = Depends(get_db)):
+    book = Book_crud.partially_update_book(db, book_id, data)
+
+    if book is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    
+    return {"detail": book, "message": "Author updated successfully"}
+
+
+#delete book
+@book_router.delete("/{book_id}", status_code = status.HTTP_200_OK)
+async def delete_book(book_id: str, db:Session = Depends(get_db)):
+    book = Book_crud.delete_book(db, book_id)
+
+    if book is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    
+    return {"message": "Book deleted successfully"}
+
+
+#unavailable book
+@book_router.put("/{book_id}/unavailable", status_code=status.HTTP_200_OK)
+async def mark_book_unavailable(book_id: str, data: BookUnavailable, db:Session = Depends(get_db)):
+    book = BookService.mark_book_unavailable(db, book_id, data)
+
+    if book is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    
+    return {"detail": book, "message": "Book successfully marked as unavailable"}

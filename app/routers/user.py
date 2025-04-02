@@ -1,12 +1,10 @@
 from fastapi import APIRouter, status, HTTPException, Depends
 from schemas.user import UserCreate, UserPatch, UserUpdate, Deactivate
 from crud.user import User_Crud
-from model import User
 from services.user import UserService
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine, Base
+from database import SessionLocal
 
-Base.metadata.create_all(bind=engine)
 
 user_router = APIRouter()
 
