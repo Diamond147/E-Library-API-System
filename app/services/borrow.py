@@ -1,106 +1,47 @@
-from datetime import datetime
 from uuid import uuid4
-from fastapi import HTTPException, status
-from schemas.borrow import Borrow
-from db import Users, Books, Borrow_Records
+from model import User, Book, Borrow
+from schemas.borrow import BorrowBase, BorrowRecord, Return
+from sqlalchemy.orm import Session
 
 
 class BorrowService:
 
     @staticmethod
-    def borrow_book(user_id:str, book_id:str):
+    def borrow_book(db:Session, data:BorrowBase):
 
-        if user_id not in Users:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        user = db.query(User).filter(User.id==data.user_id).first()
+
+        if not user and user.is_active==False:
+            return None
         
-        if not Users[user_id]["is_active"]:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not active")
+        book = db.query(Book).filter(Book.id==data.book_id).first()
+
+        if not book and book.is_available==False:
+            return None
         
-        if book_id not in Books:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
-        
-        if not Books[book_id]["is_available"]:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not available")
-        
-        record_id = str(uuid4())
+        borrow = Borrow(id=str(uuid4()), **data.model_dump())
 
-        Borrow_Records[record_id] = {
-            "record_id": record_id,
-            "user_id": user_id,
-            "book_id": book_id,
-            "borrow_date": datetime.now(),
-            "return_date": None
-        }
+        book.is_available = False
 
-        Books[book_id]["is_available"] = False
+        db.add(borrow)
+        db.commit()
+        db.refresh(borrow)
 
-        return Borrow_Records
-    
-
-# #from sqlalchemy.orm import Session
-# from fastapi import Depends, HTTPException, status
-# from database import SessionLocal
-# from models import User, Book, BorrowRecord
-# import uuid
-# from datetime import datetime
-
-# # Dependency to get the database session
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
-
-# def borrow_book(user_id: str, book_id: str, db: Session = Depends(get_db)):
-#     # Check if user exists
-#     user = db.query(User).filter(User.id == user_id).first()
-#     if not user:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    
-#     if not user.is_active:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not active")
-
-#     # Check if book exists
-#     book = db.query(Book).filter(Book.id == book_id).first()
-#     if not book:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
-    
-#     if not book.is_available:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Book is not available")
-
-#     # Create a borrow record
-#     record = BorrowRecord(
-#         id=str(uuid.uuid4()),
-#         user_id=user_id,
-#         book_id=book_id,
-#         borrow_date=datetime.utcnow(),
-#         return_date=None
-#     )
-
-#     # Update book availability
-#     book.is_available = False
-
-#     # Save changes to the database
-#     db.add(record)
-#     db.commit()
-#     db.refresh(record)
-
-#     return record
+        return borrow
 
     
 
-    @staticmethod
-    def return_book(record_id:str, data:Borrow):
+    # @staticmethod
+    # def return_book(record_id:str, data:Borrow):
     
-        if record_id not in Borrow_Records:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Record not found")
+    #     if record_id not in Borrow_Records:
+    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Record not found")
         
-        Borrow_Records[record_id]["return_date"] = data.return_date
+    #     Borrow_Records[record_id]["return_date"] = data.return_date
 
-        book_id = Borrow_Records[record_id]["book_id"]
+    #     book_id = Borrow_Records[record_id]["book_id"]
 
-        Books[book_id]["is_available"] = True
+    #     Books[book_id]["is_available"] = True
 
-        return Borrow_Records[record_id] 
+    #     return Borrow_Records[record_id] 
     

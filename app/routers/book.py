@@ -3,18 +3,10 @@ from schemas.book import BookCreate,BookPatch,BookUpdate, BookUnavailable
 from crud.book import Book_crud
 from services.book import BookService
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import get_db
 
 
 book_router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
     
     
 #get all books    

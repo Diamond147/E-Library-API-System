@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from schemas.user import Deactivate
 from sqlalchemy.orm import Session
 from model import User

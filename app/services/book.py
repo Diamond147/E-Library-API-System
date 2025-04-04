@@ -1,5 +1,3 @@
-from fastapi import HTTPException, status
-from db import Books
 from sqlalchemy.orm import Session
 from crud.book import Book_crud
 from schemas.book import BookUnavailable

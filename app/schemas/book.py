@@ -24,5 +24,3 @@ class BookUnavailable(BaseModel):
     title: Optional[str] = "first title"
     author: Optional[str] = "first author"
     is_available: bool = False
-
-# print(uuid4())

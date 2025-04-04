@@ -3,17 +3,10 @@ from schemas.user import UserCreate, UserPatch, UserUpdate, Deactivate
 from crud.user import User_Crud
 from services.user import UserService
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import get_db
 
 
 user_router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 #get all users

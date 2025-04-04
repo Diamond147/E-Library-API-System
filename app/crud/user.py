@@ -77,12 +77,12 @@ class UserCrud:
 
     #     return user
     
+
     @staticmethod
     def partially_update_user(db: Session, user_id: str, data: UserPatch):
 
         # Get the book by id
         user = User_Crud.get_user_by_id(db, user_id)
-        # user = db.query(User).filter(User.id == user_id).first()
 
         if not user:
             return None
